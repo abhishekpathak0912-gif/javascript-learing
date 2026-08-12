@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Lets Do it </h1>
+    <h2 id="time">Time is: </h2>
+    <h2 id="name">hello user</h2>
+    <button onclick="" id="btn">click</button>
+    <div>
+    <button id="add">+</button>
+    <button id="re">RESET</button>
+    <button id="minus">-</button>
+    </div>
+    <h3 id="counterdislplay">counter</h3>
+    <div>
+        <button>chage theme</button>
+    </div>
+    <script>
+        let h2=document.getElementById('time')
+        setInterval(() => {
+            let time = new Date()
+            h2.textContent=time
+
+        }, 1000);
+
+        let name=document.getElementById('name')
+        let btn=document.getElementById('btn')
+        name.textContent="hello user"
+        btn.addEventListener("click",()=>
+       
+        { if(name.textContent=="hello user"){
+            ( name.textContent="abhi")}
+        else{
+            name.textContent="hello user"
+
+          }
+        })
+
+        let add=document.getElementById('add')
+        
+        let count=0
+         let counterdisplay = document.getElementById('counterdislplay')
+        add.addEventListener("click",()=>{count=count+1
+            counterdisplay.textContent=count
+
+        })
+        let minus=document.getElementById('minus')
+         minus.addEventListener("click",()=>{count=count-1
+            counterdisplay.textContent=count
+            
+        })
+         let re=document.getElementById('re')
+         re.addEventListener("click",()=>{count=0
+            counterdisplay.textContent=count
+         })
+
+
+        
+       
+    </script>
+
+</body>
+</html>
