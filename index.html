@@ -7,59 +7,403 @@
 </head>
 <body>
     <h1>Lets Do it </h1>
+    <input type="text" id="search" placeholder="Search tasks">
     <h2 id="time">Time is: </h2>
     <h2 id="name">hello user</h2>
-    <button onclick="" id="btn">click</button>
+    <input type="text" id="nameInput" placeholder="Enter your Name">
+    <button id="btn">Set Name</button>
+
     <div>
-    <button id="add">+</button>
-    <button id="re">RESET</button>
-    <button id="minus">-</button>
+        <button id="add">+</button>
+        <button id="re">RESET</button>
+        <button id="minus">-</button>
     </div>
+
     <h3 id="counterdislplay">counter</h3>
+
     <div>
-        <button>chage theme</button>
+        <button id="theme">chage theme</button>
     </div>
+
+    <div>
+        <input type="text" placeholder="ENTER TASK" id="taskinput">
+        <input type="date" id="taskdate">
+        <select  id="taskpriority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+        <button id="addtask">ADD TASK</button>
+    </div>
+
+    <div>
+        <button id="all">All</button>
+        <button id="active">Active</button>
+        <button id="completed">Completed</button>
+    </div>
+    <button id="clear">clear all</button>
+
+    <h3 id="taskcount"></h3>
+    <div id="progressContainer">
+    <div id="progressBar"></div>
+</div>
+
+    <div id="tasklist">
+
+    </div>
+
     <script>
+        
         let h2=document.getElementById('time')
+
         setInterval(() => {
-            let time = new Date()
-            h2.textContent=time
+            let time=new Date()
+            let hours=time.getHours()
+            let minutes=time.getMinutes()
+            let seconds=time.getSeconds()
+
+            hours=hours.toString().padStart(2,"0")
+            minutes=minutes.toString().padStart(2,"0")
+            seconds=seconds.toString().padStart(2,"0")
+
+            h2.textContent="Time is " + hours + ":" + minutes +":"+ seconds
 
         }, 1000);
 
-        let name=document.getElementById('name')
-        let btn=document.getElementById('btn')
-        name.textContent="hello user"
-        btn.addEventListener("click",()=>
-       
-        { if(name.textContent=="hello user"){
-            ( name.textContent="abhi")}
-        else{
-            name.textContent="hello user"
 
-          }
-        })
+        let name=document.getElementById('name')
+        let nameInput = document.getElementById('nameInput')
+        let btn=document.getElementById('btn')
+        let savedName=localStorage.getItem("name")
+
+        if(savedName !== null){
+            name.textContent=savedName
+        }
+
+        btn.addEventListener("click",()=>{
+        if(nameInput.value==""){
+            alert("enter the name")
+
+        }
+        else{
+            name.textContent=nameInput.value.trim()
+            localStorage.setItem("name",nameInput.value.trim())
+            nameInput.value=""
+        }
+
+    })
+
+
+        function changecounter(amount){
+            count = count+amount
+        }
 
         let add=document.getElementById('add')
-        
-        let count=0
-         let counterdisplay = document.getElementById('counterdislplay')
-        add.addEventListener("click",()=>{count=count+1
-            counterdisplay.textContent=count
+        let count=Number(localStorage.getItem("count")) || 0
+        let counterdisplay = document.getElementById('counterdislplay')
+        updateCounter(count)
 
+        function changecounter(amount){
+            count=count+amount
+            localStorage.setItem("count",count)
+        }
+
+
+
+        add.addEventListener("click",()=>{
+            changecounter(+1)
+            updateCounter(count)
         })
+
         let minus=document.getElementById('minus')
-         minus.addEventListener("click",()=>{count=count-1
-            counterdisplay.textContent=count
-            
+
+        minus.addEventListener("click",()=>{
+            changecounter(-1)
+            updateCounter(count)
         })
-         let re=document.getElementById('re')
-         re.addEventListener("click",()=>{count=0
-            counterdisplay.textContent=count
-         })
+
+        let re=document.getElementById('re')
+
+        re.addEventListener("click",()=>{
+            changecounter(-count)
+            updateCounter(count)
+        })
+
+        let theme=document.getElementById('theme')
+        let savedTheme=localStorage.getItem("theme")
+
+        if(savedTheme !== null){
+    document.body.style.backgroundColor=savedTheme
+}
+
+        theme.addEventListener("click",()=>{
+            if(document.body.style.backgroundColor=="white"){
+                document.body.style.backgroundColor="lightgreen"
+            }
+            else if (document.body.style.backgroundColor=="lightgreen") {
+                document.body.style.backgroundColor="lightblue"
+            } else {
+                document.body.style.backgroundColor="white"
+            }
+             localStorage.setItem("theme",document.body.style.backgroundColor)
+
+        })
+
+        function updateCounter(value){
+            counterdisplay.textContent=value
+        }
 
 
-        
+        let tasks=[]
+        let savedTasks=localStorage.getItem("tasks")
+
+        if(savedTasks !== null){
+            tasks=JSON.parse(savedTasks)
+        }
+
+        tasks.forEach((item)=>{
+            if(!item.priority){
+                item.priority="Medium"
+            }
+        })
+        saveTasks()
+
+        let taskinput=document.getElementById('taskinput')
+        let taskdate=document.getElementById('taskdate')
+        let taskpriority=document.getElementById('taskpriority')
+        let tasklist=document.getElementById('tasklist')
+        let addtask= document.getElementById('addtask')
+        let taskcount=document.getElementById("taskcount")
+        let search=document.getElementById("search")
+        let clear=document.getElementById("clear")
+
+        clear.addEventListener("click",()=>{
+            let confirmClear=confirm("are you sure to claer all task")
+            if(confirmClear){
+    tasks=[]
+    saveTasks()
+    renderTasks()
+            }
+})
+
+
+        addtask.addEventListener("click",()=>{
+            let input= taskinput.value
+           
+        let exists=tasks.some(item=>item.text.toLowerCase()===input.toLowerCase())
+
+        if(input==""){
+            alert("enter a task")
+        }
+
+        else if(exists){
+            alert("task already exists")
+        }
+            else{
+                let newtask={
+                    text: input,
+                    completed:false,
+                    date: taskdate.value,
+                    priority:taskpriority.value
+                    
+                }
+
+                tasks.push(newtask)
+                saveTasks()
+                taskinput.value=""
+                taskdate.value=""
+                renderTasks()
+            }
+        })
+         taskinput.addEventListener("keydown",(event)=>{
+                if(event.key==="Enter"){
+                    addtask.click()
+                }
+            })
+
+
+        function renderTasks(filter){
+            tasklist.innerHTML=""
+
+            let filteredTasks=tasks
+
+            if(filter==="active"){
+                filteredTasks=tasks.filter(item=> item.completed===false)
+            }
+
+            if(filter==="completed"){
+                filteredTasks=tasks.filter(item=>item.completed===true)
+            }
+
+            let searchText=search.value.toLowerCase().trim()
+
+            if(searchText!==""){
+                filteredTasks=filteredTasks.filter(item=>
+                    item.text.toLowerCase().includes(searchText)
+                )
+            }
+
+let total=tasks.length
+
+let activeCount=tasks.filter(item=>item.completed===false).length
+
+let completedCount=tasks.filter(item=>item.completed===true).length
+
+let completionPercent=total===0
+    ?0
+    :Math.round((completedCount/total)*100)
+
+let today=new Date().toISOString().split("T")[0]
+
+let overdueCount=tasks.filter(item=>
+    item.date &&
+    item.date < today &&
+    item.completed===false
+).length
+
+taskcount.textContent =
+    "Total: "+total+
+    " | Active: "+activeCount+
+    " | Completed: "+completedCount+
+    " | Overdue: "+overdueCount+
+    " | Progress: "+completionPercent+"%"
+
+filteredTasks.sort((a,b)=>{
+    let priorityOrder={
+        High:1,
+        Medium:2,
+        Low:3
+    }
+    if(priorityOrder[a.priority] !== priorityOrder[b.priority]){
+        return priorityOrder[a.priority] - priorityOrder[b.priority]
+    }
+
+    if(!a.date)return 1
+    if(!b.date)return -1
+
+    return a.date.localeCompare(b.date)
+})
+            filteredTasks.forEach((item)=>{
+                let task=document.createElement("p")
+                task.textContent=item.text
+                if(item.date){
+                    if(item.date){
+    task.textContent=item.text+" - Due: "+item.date+" - "+item.priority
+}
+                }
+                if(item.date && item.date < new Date().toISOString().split("T")[0] && item.completed===false){
+    task.textContent=item.text+" - OVERDUE"
+}
+                if (item.completed === true) {
+                    task.style.textDecoration = "line-through"
+                }
+                else {
+                    task.style.textDecoration = ""
+                }
+                let edit=document.createElement("button")
+                edit.textContent="Edit"
+                edit.addEventListener("click",(event)=>{
+                    event.stopPropagation()
+                
+                let newtext=prompt("Edit task",item.text)
+
+                if(newtext===null){
+                    return
+                }
+                newtext=newtext.trim()
+
+                if(newtext===""){
+                    alert("task cannot be empty")
+                    return
+                }
+                let newdate=prompt("edit date",item.date || "")
+
+                if(newdate===null){
+                    return
+                }
+                let newpriority=prompt("edit date (Low,Medium,High)",item.priority || "Medium")
+
+                if(newpriority===null){
+                    return
+                }
+                newpriority=newpriority.trim()
+
+                if(newpriority!=="High" && newpriority!=="Medium" && newpriority!=="Low"){
+                    alert("priority must be Low,Medium, or High")
+                    return
+                }
+                if(newtext!== null && newtext !==""){
+                    item.text=newtext
+                    item.date=newdate
+                    item.priority=newpriority
+                    saveTasks()
+                    renderTasks(filter)
+                }
+            })
+            
+
+                let del=document.createElement("button")
+                del.textContent="Delete"
+
+                del.addEventListener("click",(event)=>{
+                    event.stopPropagation()
+
+                    let index= tasks.indexOf(item)
+
+                    if(index !== -1){
+                        tasks.splice(index,1)
+                        saveTasks()
+                        renderTasks(filter)
+                    }
+                })
+
+
+                task.addEventListener("click",()=>{
+                    if(item.completed===false){
+                        item.completed=true
+                        task.style.textDecoration="line-through"
+                    }
+                    else{
+                        item.completed=false
+                        task.style.textDecoration=""
+                    }
+
+                    saveTasks()
+                })
+                task.append(edit)
+                task.append(del)
+                tasklist.append(task)
+            })
+        }
+
+
+        function saveTasks(){
+            localStorage.setItem("tasks",JSON.stringify(tasks))
+        }
+
+        renderTasks()
+
+        let all=document.getElementById("all")
+        let active = document.getElementById("active")
+        let completed=document.getElementById("completed")
+
+
+        all.addEventListener("click",()=>{
+            renderTasks()
+        })
+
+        active.addEventListener("click",()=>{
+            renderTasks("active")
+        })
+
+        completed.addEventListener("click",()=>{
+            renderTasks("completed")
+        })
+
+       search.addEventListener("input",()=>{
+        renderTasks()
+       })
+
        
     </script>
 
