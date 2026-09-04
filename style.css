@@ -1,0 +1,99 @@
+body{
+    background-color: lightblue;
+    font-family: Arial, sans-serif;
+    margin: 30px auto;
+    max-width: 900px;
+    padding: 20px;
+    background-color: white;
+}
+
+h1{
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+#search{
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+#taskinput{
+    width: 250px;
+    border-radius: 5px;
+}
+#taskdate,
+#taskpriority{
+    padding: 8px;
+    font-size: 15px;
+    border-radius: 5px;
+}
+#addtask{
+    margin-right: 5px;
+}
+#clear{
+    margin-top: 5px;
+}
+
+
+button{
+    padding: 8px 14px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+#tasklist{
+    margin-top: 20px;
+}
+
+#tasklist p{
+    padding: 10px;
+    margin-bottom: 8px;
+    background-color: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    line-height: 1.5;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+#tasklist p button{
+    margin-left: 8px;
+}
+
+#taskcount{
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#all,
+#active,
+#completed{
+    margin-right: 5px;
+}
+
+#time,
+#name
+
+button:hover{
+    background-color: #ddd;
+}
+
+div{
+    margin-bottom: 15px;
+}
+
+#progressContainer{
+    width: 300px;
+    height: 24px;
+    background-color: lightgray;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+#progressBar{
+    width: 0%;
+    height: 100%;
+    background-color: green;
+    transition: width 0.3s ease;
+}
